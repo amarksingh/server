@@ -14,7 +14,7 @@ class Server {
                     error = error.stack
                 } else if (typeof error == 'object') {
                     status = error.status || 500
-                    error = error
+                    error = JSON.stringify(error)
                 }
                 error = process.env['NODE_ENV'] != 'production' ? error : 'Whoops, looks like something went wrong.'
                 res.send(`<pre>${error}</pre>`, status);
@@ -34,9 +34,9 @@ class Server {
         })
         stack.push(errServer)
 
-        return (req, res, out) => {
-            req = new Request(req)
-            res = new Response(res)
+        return (rawReq, rawRes, out) => {
+            var req = new Request(rawReq)
+            var res = new Response(rawRes)
             Object.defineProperty(res, 'request', { value: req })
 
             var index = 0;
@@ -44,7 +44,7 @@ class Server {
             var removed = '';
             var slashAdded = false;
 
-            var done = out || finalhandler(req, res, {
+            var done = out || finalhandler(rawReq, rawRes, {
                 env: env,
                 onerror: logerror
             });
@@ -66,7 +66,7 @@ class Server {
                     defer(done, err);
                     return;
                 }
-                var path = req.url || '/';
+                var path = (protohost ? req.url.substr(protohost.length) : req.url) || '/';
                 var route = layer.route;
 
                 if (path.toLowerCase().substr(0, route.length) !== route.toLowerCase()) {

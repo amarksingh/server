@@ -4,7 +4,7 @@
   "description": "Server module for OstroJS",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx c8 npx jest",
     "start": "node server.js"
   },
   "dependencies": {

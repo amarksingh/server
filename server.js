@@ -49,18 +49,16 @@ function creatSslConfig(ssl, httpVersion) {
 }
 class Server extends ServerContract {
 
-    constructor({app,serverless}) {
+    constructor({app,serverless} = {}) {
         super()
-        config = resolveConfig(app);
-        this.$port = app.port || 8080;
-        this.$host = app.host || '127.0.0.1';
-        this[kHttpVersion] = app.http_version;
-        this[kSsl] = app.ssl;
+        const config = resolveConfig(app);
+        this.$port = config.port !== undefined ? config.port : 8080;
+        this.$host = config.host || '127.0.0.1';
+        this[kHttpVersion] = config.http_version;
+        this[kSsl] = config.ssl;
         this[kServerType] = 'server';
         this[kStacks] = [];
-        Object.defineProperty(this, '$serverlessConfig', {
-            value: serverless,
-        });
+        this.$serverlessConfig = serverless;
     }
 
     register(path, handle) {
@@ -102,12 +100,11 @@ class Server extends ServerContract {
             return options.port
         } else {
             return {
-                port: exists((options.port), 8080),
-                host: exists((options.host), '127.0.0.1'),
+                port: options.port !== undefined ? options.port : this.$port,
+                host: options.host !== undefined ? options.host : this.$host,
                 cert: options.cert,
                 key: options.key
             }
-
         }
     }
 
@@ -141,23 +138,24 @@ class Server extends ServerContract {
         return this;
     }
 
-    start(options = {}, cb) {
-        var options = this.address(options)
+    start(options, cb) {
+        let args = Array.from(arguments)
+        let rawOptions = args.find(arg => typeof arg == 'object' || typeof arg == 'string') || {}
+        cb = args.find(arg => typeof arg == 'function')
+        rawOptions = typeof rawOptions === 'string' ? { port: rawOptions } : rawOptions;
+        let resolvedAddress = this.address(rawOptions)
         let httpConfig = httpTypes[this[kHttpVersion]]
         let http = require(httpConfig.module)
-        let args = Array.from(arguments)
-        options = args.find(arg => typeof arg == 'object') || {}
-        cb = args.find(arg => typeof arg == 'function')
 
-        options = typeof options === 'string' ? { port: options } : options;
-        if (options.port) {
-            this.$port = options.port
+        if (typeof resolvedAddress === 'string') {
+            this.$port = resolvedAddress;
+        } else {
+            this.$port = resolvedAddress.port;
+            this.$host = resolvedAddress.host;
         }
-        if (options.host) {
-            this.$host = options.host
-        }
+        const listenTarget = path.isAbsolute(this.$port.toString()) ? this.$port : { port: this.$port, host: this.$host };
         return http[httpConfig.starter](this.createServerConfig(), this.handle())
-            .listen({ port: this.$port, host: this.$host }, () => {
+            .listen(listenTarget, () => {
                 if (typeof cb == 'function') {
                     cb({
                         port: this.$port,
@@ -190,7 +188,7 @@ function resolveConfig(config = {}) {
             config.ssl.ca = path.isAbsolute(config.ssl.ca) ? fs.readFileSync(config.ssl.ca) : fs.readFileSync(path.resolve(config.ssl.ca));
         }
     }
-    if (config.port) {
+    if (config.port !== undefined) {
         config.port = parseInt(config.port)
     }
     return config

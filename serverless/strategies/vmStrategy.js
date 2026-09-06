@@ -12,11 +12,12 @@ class VmStrategy {
     // Create a custom require function that works as Node does, relative to the module path
     const customRequire = Module.createRequire(resolvedModulePath);
 
+    const moduleObj = { exports: {} };
     const sandbox = {
       console,
       require: customRequire,
-      module: { exports: {} },
-      exports: {},
+      module: moduleObj,
+      exports: moduleObj.exports,
       process,
       Buffer,
       setTimeout,
@@ -31,10 +32,9 @@ class VmStrategy {
     const script = new vm.Script(code, { filename: resolvedModulePath });
     script.runInContext(context);
 
-    const handler =
-      typeof sandbox.exports === 'function'
-        ? sandbox.exports
-        : sandbox.module.exports[handlerName];
+    const handler = typeof sandbox.module.exports === 'function'
+      ? sandbox.module.exports
+      : sandbox.module.exports[handlerName];
 
     if (typeof handler !== 'function') {
       throw new Error(`Handler "${handlerName}" is not a function`);

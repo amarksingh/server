@@ -8,8 +8,12 @@ class ThreadStrategy {
             const worker = new Worker(workerPath, {
                 workerData: { modulePath, handlerName, event }
             });
-            worker.on('message', (result) => {
-                resolve(result);
+            worker.on('message', (msg) => {
+                if (msg && msg.error) {
+                    reject(new Error(msg.error));
+                } else {
+                    resolve(msg);
+                }
             });
             worker.on('error', reject);
             worker.on('exit', (code) => {

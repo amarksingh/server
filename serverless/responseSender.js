@@ -1,7 +1,8 @@
 class ResponseSender {
     static sendSuccess(res, result) {
         if (result.cookies) {
-            result.headers['Set-Cookie'] = result.cookies || [];
+            result.headers = result.headers || {};
+            result.headers['Set-Cookie'] = result.cookies;
         }
         res.writeHead(result.statusCode || 200, result.headers || {});
         if (result.isBase64Encoded) {
@@ -13,11 +14,12 @@ class ResponseSender {
     }
 
     static sendError(res, err) {
-        if (typeof err.message === 'string') {
-            return res.send(err.message)
+        const message = err && typeof err.message === 'string' ? err.message : String(err);
+        if (typeof res.send === 'function') {
+            return res.send(message, 500);
         }
         res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: err.message }));
+        res.end(JSON.stringify({ error: message }));
     }
 }
 

@@ -1,8 +1,8 @@
 exports.logerror = function logerror(err) {
-    if (env !== 'test') console.error(err.stack || err.toString());
+    if ((process.env.NODE_ENV || 'development') !== 'test') console.error(err.stack || err.toString());
 }
 
-exports.env = env
+exports.env = process.env.NODE_ENV || 'development'
 
 exports.call = function call(handle, route, err, req, res, next) {
     var arity = handle.length;

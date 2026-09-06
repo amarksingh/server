@@ -18,20 +18,20 @@ class EventBuilder {
                     ? headers.cookie.split(';').map(c => c.trim())
                     : [];
 
+                const query = parsedUrl.query;
+                const rawQueryString = new URLSearchParams(query).toString();
+
                 resolve({
                     version: '2.0',
                     routeKey: parsedUrl.pathname,
                     rawPath: req.url,
                     url: req.url,
-                    query: parsedUrl.query,
-                    rawQueryString: parsedUrl.query
-                        ? new URLSearchParams(parsedUrl.query).toString()
-                        : '',
+                    query: query,
+                    rawQueryString: rawQueryString,
                     cookies,
                     headers,
                     method: req.method,
                     params: req.params || {},
-                    query: parsedUrl.query || {},
                     requestContext: {
                         http: {
                             method: req.method,
