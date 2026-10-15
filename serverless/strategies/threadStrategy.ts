@@ -2,6 +2,15 @@ const { Worker } = require('worker_threads');
 const path = require('path');
 
 class ThreadStrategy {
+    /**
+     * run method.
+     *
+     * @async
+     * @param {any} modulePath
+     * @param {any} handlerName
+     * @param {any} event
+     * @returns {any}
+     */
     async run(modulePath, handlerName, event) {
         return new Promise((resolve, reject) => {
             const workerPath = path.resolve(__dirname, '../wrappers/threadWrapper.js');

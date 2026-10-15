@@ -24,6 +24,12 @@ exports.call = function call(handle, route, err, req, res, next) {
 }
 
 exports.getProtohost = function getProtohost(url) {
+    /**
+     * if method.
+     *
+     * @param {any} url.length
+     * @returns {any}
+     */
     if (url.length === 0 || url[0] === '/') {
         return undefined;
     }
@@ -37,6 +43,12 @@ exports.getProtohost = function getProtohost(url) {
 
 exports.defer = typeof setImmediate === 'function' ?
     setImmediate :
+    /**
+     * function method.
+     *
+     * @param {any} fn
+     * @returns {any}
+     */
     function (fn) {
         process.nextTick(fn.bind.apply(fn, arguments))
     }

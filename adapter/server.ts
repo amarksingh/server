@@ -2,9 +2,22 @@ const { defer, call, logerror, getProtohost, env } = require('../utils');
 const url = require('url');
 const finalhandler = require('finalhandler');
 class Server {
+    /**
+     * constructor method.
+     *
+     * @param {any} stacks
+     * @returns {any}
+     */
     constructor(stacks = []) {
         this.$stacks = stacks;
     }
+    /**
+     * handle method.
+     *
+     * @param {any} Request
+     * @param {any} Response
+     * @returns {any}
+     */
     handle(Request, Response) {
         var errServer = {
             handle: (error, req, res, next) => {

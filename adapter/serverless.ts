@@ -1,5 +1,11 @@
 const LambdaSimulator = require('../serverless/lambdaSimulator');
 class ServerLess {
+    /**
+     * constructor method.
+     *
+     * @param {any} serverlessConfig
+     * @returns {any}
+     */
     constructor(serverlessConfig) {
         Object.defineProperties(this, {
             $lambda: {
@@ -9,6 +15,13 @@ class ServerLess {
 
     }
 
+    /**
+     * handle method.
+     *
+     * @param {any} request
+     * @param {any} response
+     * @returns {any}
+     */
     handle($request, $response) {
         return (req, res) => {
             req = new $request(req);

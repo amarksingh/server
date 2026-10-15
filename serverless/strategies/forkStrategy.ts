@@ -2,6 +2,16 @@ const { fork } = require('child_process');
 const path = require('path');
 
 class ForkStrategy {
+    /**
+     * run method.
+     *
+     * @async
+     * @param {any} modulePath
+     * @param {any} handlerName
+     * @param {any} event
+     * @param {any} cwd
+     * @returns {any}
+     */
     async run(modulePath, handlerName, event, cwd) {
         return new Promise((resolve, reject) => {
             const forkWrapper = path.resolve(__dirname, '../wrappers/frokWrapper.js');

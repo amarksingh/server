@@ -30,6 +30,12 @@ var httpTypes = {
 
 function creatSslConfig(ssl, httpVersion) {
     let obj = Object.create(null)
+    /**
+     * switch method.
+     *
+     * @param {any} httpVersion
+     * @returns {any}
+     */
     switch (httpVersion) {
         case 'https':
             obj.key = ssl.key;
@@ -49,6 +55,13 @@ function creatSslConfig(ssl, httpVersion) {
 }
 class Server extends ServerContract {
 
+    /**
+     * constructor method.
+     *
+     * @param {any} {app
+     * @param {any} serverless}
+     * @returns {any}
+     */
     constructor({app,serverless} = {}) {
         super()
         const config = resolveConfig(app);
@@ -61,6 +74,13 @@ class Server extends ServerContract {
         this.$serverlessConfig = serverless;
     }
 
+    /**
+     * register method.
+     *
+     * @param {any} path
+     * @param {any} handle
+     * @returns {any}
+     */
     register(path, handle) {
         if (typeof path !== 'string') {
             handle = path;
@@ -91,10 +111,21 @@ class Server extends ServerContract {
 
         return this;
     }
+    /**
+     * createServerConfig method.
+     *
+     * @returns {any}
+     */
     createServerConfig() {
         return Object.assign(creatSslConfig(this[kSsl], this[kHttpVersion]))
     }
 
+    /**
+     * address method.
+     *
+     * @param {any} options
+     * @returns {any}
+     */
     address(options = {}) {
         if (path.isAbsolute(String(options.port || ' '))) {
             return options.port
@@ -108,6 +139,12 @@ class Server extends ServerContract {
         }
     }
 
+    /**
+     * request method.
+     *
+     * @param {any} HttpRequest
+     * @returns {any}
+     */
     request(HttpRequest) {
         if (typeof HttpRequest != 'function') {
             throw new Error('HttpRequest class must be function/class')
@@ -116,6 +153,12 @@ class Server extends ServerContract {
         return this;
     }
 
+    /**
+     * response method.
+     *
+     * @param {any} HttpResponse
+     * @returns {any}
+     */
     response(HttpResponse) {
         if (typeof HttpResponse != 'function') {
             throw new Error('HttpResponse class must function/class')
@@ -124,6 +167,11 @@ class Server extends ServerContract {
         return this;
     }
 
+    /**
+     * handle method.
+     *
+     * @returns {any}
+     */
     handle() {
         if (this[kServerType] == 'serverless') {
             return (new Serverless(this.$serverlessConfig)).handle(this.$request, this.$response);
@@ -133,11 +181,24 @@ class Server extends ServerContract {
         throw new Error('Server type not supported');
     }
 
+    /**
+     * type method.
+     *
+     * @param {any} type
+     * @returns {any}
+     */
     type(type) {
         this[kServerType] = type;
         return this;
     }
 
+    /**
+     * start method.
+     *
+     * @param {any} options
+     * @param {any} cb
+     * @returns {any}
+     */
     start(options, cb) {
         let args = Array.from(arguments)
         let rawOptions = args.find(arg => typeof arg == 'object' || typeof arg == 'string') || {}
@@ -177,6 +238,12 @@ function resolveConfig(config = {}) {
         ...(config.ssl || {})
     }
     config.http_version = config.http_version || 'http'
+    /**
+     * if method.
+     *
+     * @param {any} config.http_version
+     * @returns {any}
+     */
     if (config.http_version == 'https' || config.http_version == "https2") {
         if (typeof config.ssl.key == 'string') {
             config.ssl.key = path.isAbsolute(config.ssl.key) ? fs.readFileSync(config.ssl.key) : fs.readFileSync(path.resolve(config.ssl.key));
@@ -188,6 +255,12 @@ function resolveConfig(config = {}) {
             config.ssl.ca = path.isAbsolute(config.ssl.ca) ? fs.readFileSync(config.ssl.ca) : fs.readFileSync(path.resolve(config.ssl.ca));
         }
     }
+    /**
+     * if method.
+     *
+     * @param {any} config.port !
+     * @returns {any}
+     */
     if (config.port !== undefined) {
         config.port = parseInt(config.port)
     }

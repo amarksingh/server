@@ -2,6 +2,16 @@ const { spawn } = require('child_process');
 const path = require('path');
 
 class ProcessStrategy {
+    /**
+     * run method.
+     *
+     * @async
+     * @param {any} modulePath
+     * @param {any} handlerName
+     * @param {any} event
+     * @param {any} cwd
+     * @returns {any}
+     */
     async run(modulePath, handlerName, event, cwd) {
         return new Promise((resolve, reject) => {
             const wrapper = path.resolve(__dirname, '../wrappers/workerWrapper.js');

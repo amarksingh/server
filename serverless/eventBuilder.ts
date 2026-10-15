@@ -2,6 +2,13 @@ const url = require('url');
 const { Buffer } = require('buffer');
 
 class EventBuilder {
+    /**
+     * fromHttpRequest method.
+     *
+     * @static
+     * @param {any} req
+     * @returns {any}
+     */
     static fromHttpRequest(req) {
         return new Promise((resolve) => {
             const bodyChunks = [];
@@ -49,6 +56,13 @@ class EventBuilder {
         });
     }
 
+    /**
+     * _isBinaryContent method.
+     *
+     * @static
+     * @param {any} contentType
+     * @returns {any}
+     */
     static _isBinaryContent(contentType = '') {
         const textTypes = [
             'text/',

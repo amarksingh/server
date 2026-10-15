@@ -36,6 +36,12 @@ class VmStrategy {
       ? sandbox.module.exports
       : sandbox.module.exports[handlerName];
 
+    /**
+     * if method.
+     *
+     * @param {any} typeof handler !
+     * @returns {any}
+     */
     if (typeof handler !== 'function') {
       throw new Error(`Handler "${handlerName}" is not a function`);
     }

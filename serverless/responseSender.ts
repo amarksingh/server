@@ -1,4 +1,12 @@
 class ResponseSender {
+    /**
+     * sendSuccess method.
+     *
+     * @static
+     * @param {any} res
+     * @param {any} result
+     * @returns {any}
+     */
     static sendSuccess(res, result) {
         if (result.cookies) {
             result.headers = result.headers || {};
@@ -13,6 +21,14 @@ class ResponseSender {
         }
     }
 
+    /**
+     * sendError method.
+     *
+     * @static
+     * @param {any} res
+     * @param {any} err
+     * @returns {any}
+     */
     static sendError(res, err) {
         const message = err && typeof err.message === 'string' ? err.message : String(err);
         if (typeof res.send === 'function') {

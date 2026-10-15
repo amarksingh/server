@@ -4,6 +4,12 @@ const ResponseSender = require('./responseSender');
 const path = require('path');
 
 class LambdaSimulator {
+    /**
+     * constructor method.
+     *
+     * @param {any} serverlessConfig
+     * @returns {any}
+     */
     constructor(serverlessConfig) {
         let handlerString = serverlessConfig.handler
         if (!path.isAbsolute(handlerString)) {
@@ -32,6 +38,14 @@ class LambdaSimulator {
         });
     }
 
+    /**
+     * handleHttpRequest method.
+     *
+     * @async
+     * @param {any} req
+     * @param {any} res
+     * @returns {any}
+     */
     async handleHttpRequest(req, res) {
         const event = await EventBuilder.fromHttpRequest(req);
         try {
@@ -43,6 +57,13 @@ class LambdaSimulator {
         }
     }
 
+    /**
+     * handleEvent method.
+     *
+     * @async
+     * @param {any} event
+     * @returns {any}
+     */
     async handleEvent(event) {
         const worker = LambdaWorker.create(this.$serverless.strategy);
         return await worker.run(this.$modulePath, this.$handlerName, event);
