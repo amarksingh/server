@@ -15,7 +15,8 @@ module.exports = {
     },
     "coverageDirectory": "coverage",
     "collectCoverageFrom": [
-        "**/*.js",
+        "**/*.ts",
+        "serverless/wrappers/**/*.js",
         "!**/node_modules/**",
         "!**/vendor/**",
         "!**/coverage/**",
