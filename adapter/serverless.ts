@@ -6,7 +6,7 @@ class ServerLess {
      * @param {any} serverlessConfig
      * @returns {any}
      */
-    constructor(serverlessConfig) {
+    constructor(serverlessConfig: any) {
         Object.defineProperties(this, {
             $lambda: {
                 value: new LambdaSimulator(serverlessConfig)
@@ -22,7 +22,7 @@ class ServerLess {
      * @param {any} response
      * @returns {any}
      */
-    handle($request, $response) {
+    handle($request: any, $response: any) {
         return (req, res) => {
             req = new $request(req);
             res = new $response(res);

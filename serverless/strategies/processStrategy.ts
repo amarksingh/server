@@ -12,7 +12,7 @@ class ProcessStrategy {
      * @param {any} cwd
      * @returns {any}
      */
-    async run(modulePath, handlerName, event, cwd) {
+    async run(modulePath: any, handlerName: any, event: string, cwd: any) {
         return new Promise((resolve, reject) => {
             const wrapper = path.resolve(__dirname, '../wrappers/workerWrapper.js');
             const child = spawn(

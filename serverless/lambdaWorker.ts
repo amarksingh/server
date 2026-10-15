@@ -11,7 +11,7 @@ class LambdaWorker {
      * @param {any} strategy
      * @returns {any}
      */
-    constructor(strategy) {
+    constructor(strategy: any) {
         this.strategy = strategy;
     }
 
@@ -24,7 +24,7 @@ class LambdaWorker {
      * @param {any} options
      * @returns {any}
      */
-    run(modulePath, handlerName, event, options = {}) {
+    run(modulePath: any, handlerName: any, event: string, options: Record<string, any> = {}) {
         const cwd = options.cwd || path.dirname(modulePath);
         return this.strategy.run(modulePath, handlerName, event, cwd);
     }
@@ -36,7 +36,7 @@ class LambdaWorker {
      * @param {any} strategyName
      * @returns {any}
      */
-    static create(strategyName) {
+    static create(strategyName: any) {
         switch (strategyName) {
             case 'vm': return new LambdaWorker(new VmStrategy());
             case 'thread': return new LambdaWorker(new ThreadStrategy());

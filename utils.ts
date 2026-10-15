@@ -49,7 +49,7 @@ exports.defer = typeof setImmediate === 'function' ?
      * @param {any} fn
      * @returns {any}
      */
-    function (fn) {
+    function(fn: Function) {
         process.nextTick(fn.bind.apply(fn, arguments))
     }
 

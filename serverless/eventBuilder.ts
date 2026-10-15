@@ -9,7 +9,7 @@ class EventBuilder {
      * @param {any} req
      * @returns {any}
      */
-    static fromHttpRequest(req) {
+    static fromHttpRequest(req: any) {
         return new Promise((resolve) => {
             const bodyChunks = [];
             req.on('data', chunk => bodyChunks.push(chunk));
@@ -63,7 +63,7 @@ class EventBuilder {
      * @param {any} contentType
      * @returns {any}
      */
-    static _isBinaryContent(contentType = '') {
+    static _isBinaryContent(contentType: string = '') {
         const textTypes = [
             'text/',
             'application/json',

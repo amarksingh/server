@@ -62,7 +62,7 @@ class Server extends ServerContract {
      * @param {any} serverless}
      * @returns {any}
      */
-    constructor({app,serverless} = {}) {
+    constructor({app,serverless}: Record<string, any> = {}) {
         super()
         const config = resolveConfig(app);
         this.$port = config.port !== undefined ? config.port : 8080;
@@ -81,7 +81,7 @@ class Server extends ServerContract {
      * @param {any} handle
      * @returns {any}
      */
-    register(path, handle) {
+    register(path: string, handle: any) {
         if (typeof path !== 'string') {
             handle = path;
             path = '/';
@@ -126,7 +126,7 @@ class Server extends ServerContract {
      * @param {any} options
      * @returns {any}
      */
-    address(options = {}) {
+    address(options: Record<string, any> = {}) {
         if (path.isAbsolute(String(options.port || ' '))) {
             return options.port
         } else {
@@ -145,7 +145,7 @@ class Server extends ServerContract {
      * @param {any} HttpRequest
      * @returns {any}
      */
-    request(HttpRequest) {
+    request(HttpRequest: any) {
         if (typeof HttpRequest != 'function') {
             throw new Error('HttpRequest class must be function/class')
         }
@@ -159,7 +159,7 @@ class Server extends ServerContract {
      * @param {any} HttpResponse
      * @returns {any}
      */
-    response(HttpResponse) {
+    response(HttpResponse: any) {
         if (typeof HttpResponse != 'function') {
             throw new Error('HttpResponse class must function/class')
         }
@@ -187,7 +187,7 @@ class Server extends ServerContract {
      * @param {any} type
      * @returns {any}
      */
-    type(type) {
+    type(type: string) {
         this[kServerType] = type;
         return this;
     }
@@ -199,7 +199,7 @@ class Server extends ServerContract {
      * @param {any} cb
      * @returns {any}
      */
-    start(options, cb) {
+    start(options: Record<string, any>, cb: any) {
         let args = Array.from(arguments)
         let rawOptions = args.find(arg => typeof arg == 'object' || typeof arg == 'string') || {}
         cb = args.find(arg => typeof arg == 'function')

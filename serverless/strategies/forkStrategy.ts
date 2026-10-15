@@ -12,7 +12,7 @@ class ForkStrategy {
      * @param {any} cwd
      * @returns {any}
      */
-    async run(modulePath, handlerName, event, cwd) {
+    async run(modulePath: any, handlerName: any, event: string, cwd: any) {
         return new Promise((resolve, reject) => {
             const forkWrapper = path.resolve(__dirname, '../wrappers/frokWrapper.js');
             const child = fork(forkWrapper, [modulePath, handlerName], { cwd, stdio: ['pipe', 'pipe', 'pipe', 'ipc'] });

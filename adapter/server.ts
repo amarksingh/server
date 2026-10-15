@@ -8,7 +8,7 @@ class Server {
      * @param {any} stacks
      * @returns {any}
      */
-    constructor(stacks = []) {
+    constructor(stacks: any[] = []) {
         this.$stacks = stacks;
     }
     /**
@@ -18,7 +18,7 @@ class Server {
      * @param {any} Response
      * @returns {any}
      */
-    handle(Request, Response) {
+    handle(Request: any, Response: any) {
         var errServer = {
             handle: (error, req, res, next) => {
                 let status = 500

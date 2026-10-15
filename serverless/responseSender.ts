@@ -7,7 +7,7 @@ class ResponseSender {
      * @param {any} result
      * @returns {any}
      */
-    static sendSuccess(res, result) {
+    static sendSuccess(res: any, result: any) {
         if (result.cookies) {
             result.headers = result.headers || {};
             result.headers['Set-Cookie'] = result.cookies;
@@ -29,7 +29,7 @@ class ResponseSender {
      * @param {any} err
      * @returns {any}
      */
-    static sendError(res, err) {
+    static sendError(res: any, err: any) {
         const message = err && typeof err.message === 'string' ? err.message : String(err);
         if (typeof res.send === 'function') {
             return res.send(message, 500);

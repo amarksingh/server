@@ -11,7 +11,7 @@ class ThreadStrategy {
      * @param {any} event
      * @returns {any}
      */
-    async run(modulePath, handlerName, event) {
+    async run(modulePath: any, handlerName: any, event: string) {
         return new Promise((resolve, reject) => {
             const workerPath = path.resolve(__dirname, '../wrappers/threadWrapper.js');
             const worker = new Worker(workerPath, {

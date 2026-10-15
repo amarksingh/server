@@ -10,7 +10,7 @@ class LambdaSimulator {
      * @param {any} serverlessConfig
      * @returns {any}
      */
-    constructor(serverlessConfig) {
+    constructor(serverlessConfig: any) {
         let handlerString = serverlessConfig.handler
         if (!path.isAbsolute(handlerString)) {
             handlerString = path.resolve(process.cwd(), handlerString);
@@ -46,7 +46,7 @@ class LambdaSimulator {
      * @param {any} res
      * @returns {any}
      */
-    async handleHttpRequest(req, res) {
+    async handleHttpRequest(req: any, res: any) {
         const event = await EventBuilder.fromHttpRequest(req);
         try {
             const worker = LambdaWorker.create(this.$serverless.strategy); // or 'vm', 'process', 'fork'
@@ -64,7 +64,7 @@ class LambdaSimulator {
      * @param {any} event
      * @returns {any}
      */
-    async handleEvent(event) {
+    async handleEvent(event: string) {
         const worker = LambdaWorker.create(this.$serverless.strategy);
         return await worker.run(this.$modulePath, this.$handlerName, event);
     }
