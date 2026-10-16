@@ -46,4 +46,5 @@ class ResponseSender {
     }
 }
 
-export = ResponseSender;
+export { ResponseSender };
+export default ResponseSender;

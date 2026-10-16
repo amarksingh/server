@@ -1,4 +1,5 @@
-const ServerLess = require("../adapter/serverless");
+const _ServerLess = require("../adapter/serverless");
+const ServerLess = _ServerLess.default || _ServerLess;
 const path = require("path");
 
 class MockRequest {

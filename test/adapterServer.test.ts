@@ -1,4 +1,5 @@
-const HttpServer = require('../adapter/server');
+const _HttpServer = require('../adapter/server');
+const HttpServer = _HttpServer.default || _HttpServer;
 
 class MockRequest {
     constructor(req) {

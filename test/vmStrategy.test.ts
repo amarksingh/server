@@ -1,4 +1,5 @@
-const VmStrategy = require("../serverless/strategies/vmStrategy");
+const _VmStrategy = require("../serverless/strategies/vmStrategy");
+const VmStrategy = _VmStrategy.default || _VmStrategy;
 const path = require("path");
 const fs = require("fs");
 

@@ -1,8 +1,8 @@
 import { dirname as pathDirname } from 'path';
-import VmStrategy from './strategies/vmStrategy';
-import ThreadStrategy from './strategies/threadStrategy';
-import ProcessStrategy from './strategies/processStrategy';
-import ForkStrategy from './strategies/forkStrategy';
+import { VmStrategy } from './strategies/vmStrategy';
+import { ThreadStrategy } from './strategies/threadStrategy';
+import { ProcessStrategy } from './strategies/processStrategy';
+import { ForkStrategy } from './strategies/forkStrategy';
 
 interface WorkerStrategy {
     run(modulePath: string, handlerName: string, event: unknown, cwd?: string): Promise<unknown>;
@@ -56,7 +56,5 @@ class LambdaWorker {
     }
 }
 
-(LambdaWorker as any).__esModule = true;
-(LambdaWorker as any).default = LambdaWorker;
-
-export = LambdaWorker;
+export { LambdaWorker };
+export default LambdaWorker;

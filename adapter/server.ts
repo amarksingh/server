@@ -1,4 +1,4 @@
-import utils, { defer, call, logerror, getProtohost, env } from '../utils';
+import utils from '../utils';
 import { parse as parseUrl } from 'url';
 import finalhandler from 'finalhandler';
 
@@ -61,13 +61,13 @@ class Server {
             Object.defineProperty(res, 'request', { value: req });
 
             let index: number = 0;
-            const protohost: string = getProtohost(req.url) || '';
+            const protohost: string = utils.getProtohost(req.url) || '';
             let removed: string = '';
             let slashAdded: boolean = false;
 
             const done: (err?: unknown) => void = out || finalhandler(rawReq, rawRes, {
-                env: env,
-                onerror: logerror
+                env: utils.env,
+                onerror: utils.logerror
             });
             req.originalUrl = req.originalUrl || req.url;
             req._parsedUrl = parseUrl(req.url, false);
@@ -84,7 +84,7 @@ class Server {
                 }
                 const layer = stack[index++];
                 if (!layer) {
-                    defer(done, err);
+                    utils.defer(done, err);
                     return;
                 }
                 const path: string = (protohost ? req.url.substr(protohost.length) : req.url) || '/';
@@ -106,7 +106,7 @@ class Server {
                     }
                 }
 
-                call(layer.handle, route, err, req, res, next);
+                utils.call(layer.handle, route, err, req, res, next);
             }
             req.next = next;
             next();
@@ -114,7 +114,4 @@ class Server {
     }
 }
 
-(Server as any).__esModule = true;
-(Server as any).default = Server;
-
-export = Server;
+export default Server;

@@ -1,4 +1,5 @@
-const EventBuilder = require("../serverless/eventBuilder");
+const _EventBuilder = require("../serverless/eventBuilder");
+const EventBuilder = _EventBuilder.default || _EventBuilder;
 const EventEmitter = require("events");
 
 describe("EventBuilder (serverless/eventBuilder.js)", () => {

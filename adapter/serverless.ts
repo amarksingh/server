@@ -1,5 +1,4 @@
-import LambdaSimulator from '../serverless/lambdaSimulator';
-import http from 'http';
+import { LambdaSimulator } from '../serverless/lambdaSimulator';
 
 class ServerLess {
     public $lambda!: LambdaSimulator;
@@ -33,7 +32,4 @@ class ServerLess {
     }
 }
 
-(ServerLess as any).__esModule = true;
-(ServerLess as any).default = ServerLess;
-
-export = ServerLess;
+export default ServerLess;

@@ -283,7 +283,4 @@ function resolveConfig(config: Record<string, any> = {}): Record<string, any> {
     return config;
 }
 
-(Server as any).__esModule = true;
-(Server as any).default = Server;
-
-export = Server;
+export default Server;

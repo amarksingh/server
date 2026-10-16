@@ -54,7 +54,5 @@ class VmStrategy {
     }
 }
 
-(VmStrategy as any).__esModule = true;
-(VmStrategy as any).default = VmStrategy;
-
-export = VmStrategy;
+export { VmStrategy };
+export default VmStrategy;

@@ -32,4 +32,5 @@ class ThreadStrategy {
     }
 }
 
-export = ThreadStrategy;
+export { ThreadStrategy };
+export default ThreadStrategy;

@@ -58,4 +58,5 @@ class ProcessStrategy {
     }
 }
 
-export = ProcessStrategy;
+export { ProcessStrategy };
+export default ProcessStrategy;

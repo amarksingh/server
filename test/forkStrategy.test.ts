@@ -7,20 +7,23 @@ describe("ForkStrategy (serverless/strategies/forkStrategy.js)", () => {
     const fixturePath = path.resolve(__dirname, "fixtures/dummyHandler.js");
 
     test("runs handler in forked process successfully", async () => {
-        const ForkStrategy = require("../serverless/strategies/forkStrategy");
+        const _ForkStrategy = require("../serverless/strategies/forkStrategy");
+const ForkStrategy = _ForkStrategy.default || _ForkStrategy;
         const strategy = new ForkStrategy();
         const result = await strategy.run(fixturePath, "hello", { test: 1 }, process.cwd());
         expect(result).toEqual({ statusCode: 200, body: "ok" });
     });
 
     test("rejects when forked process returns error message", async () => {
-        const ForkStrategy = require("../serverless/strategies/forkStrategy");
+        const _ForkStrategy = require("../serverless/strategies/forkStrategy");
+const ForkStrategy = _ForkStrategy.default || _ForkStrategy;
         const strategy = new ForkStrategy();
         await expect(strategy.run(fixturePath, "missingHandler", {}, process.cwd())).rejects.toThrow();
     });
 
     test("rejects when forked process exits with non-zero exit code", async () => {
-        const ForkStrategy = require("../serverless/strategies/forkStrategy");
+        const _ForkStrategy = require("../serverless/strategies/forkStrategy");
+const ForkStrategy = _ForkStrategy.default || _ForkStrategy;
         const strategy = new ForkStrategy();
         const badFork = path.resolve(__dirname, "fixtures/badFork.js");
         fs.writeFileSync(badFork, "process.exit(4);");
@@ -42,7 +45,8 @@ describe("ForkStrategy (serverless/strategies/forkStrategy.js)", () => {
         });
 
         jest.isolateModules(async () => {
-            const ForkStrategy = require('../serverless/strategies/forkStrategy');
+            const _ForkStrategy = require('../serverless/strategies/forkStrategy');
+const ForkStrategy = _ForkStrategy.default || _ForkStrategy;
             const strategy = new ForkStrategy();
             await expect(strategy.run(fixturePath, 'hello', {}, process.cwd())).rejects.toThrow('Fork spawn failed');
             spy.mockRestore();

@@ -1,4 +1,5 @@
-const ResponseSender = require("../serverless/responseSender");
+const _ResponseSender = require("../serverless/responseSender");
+const ResponseSender = _ResponseSender.default || _ResponseSender;
 
 describe("ResponseSender (serverless/responseSender.js)", () => {
     test("sendSuccess handles text body and custom status/headers", () => {

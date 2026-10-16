@@ -1,8 +1,13 @@
-const LambdaWorker = require("../serverless/lambdaWorker");
-const VmStrategy = require("../serverless/strategies/vmStrategy");
-const ThreadStrategy = require("../serverless/strategies/threadStrategy");
-const ForkStrategy = require("../serverless/strategies/forkStrategy");
-const ProcessStrategy = require("../serverless/strategies/processStrategy");
+const _LambdaWorker = require("../serverless/lambdaWorker");
+const LambdaWorker = _LambdaWorker.default || _LambdaWorker;
+const _VmStrategy = require("../serverless/strategies/vmStrategy");
+const VmStrategy = _VmStrategy.default || _VmStrategy;
+const _ThreadStrategy = require("../serverless/strategies/threadStrategy");
+const ThreadStrategy = _ThreadStrategy.default || _ThreadStrategy;
+const _ForkStrategy = require("../serverless/strategies/forkStrategy");
+const ForkStrategy = _ForkStrategy.default || _ForkStrategy;
+const _ProcessStrategy = require("../serverless/strategies/processStrategy");
+const ProcessStrategy = _ProcessStrategy.default || _ProcessStrategy;
 const path = require("path");
 
 describe("LambdaWorker (serverless/lambdaWorker.js)", () => {

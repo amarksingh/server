@@ -1,7 +1,7 @@
 import { resolve as pathResolve, isAbsolute as pathIsAbsolute } from 'path';
-import LambdaWorker from './lambdaWorker';
-import EventBuilder from './eventBuilder';
-import ResponseSender from './responseSender';
+import { LambdaWorker } from './lambdaWorker';
+import { EventBuilder } from './eventBuilder';
+import { ResponseSender } from './responseSender';
 
 interface ServerlessConfig {
     handler: string;
@@ -77,7 +77,5 @@ class LambdaSimulator {
     }
 }
 
-(LambdaSimulator as any).__esModule = true;
-(LambdaSimulator as any).default = LambdaSimulator;
-
-export = LambdaSimulator;
+export { LambdaSimulator };
+export default LambdaSimulator;

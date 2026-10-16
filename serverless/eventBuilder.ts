@@ -98,4 +98,5 @@ class EventBuilder {
     }
 }
 
-export = EventBuilder;
+export { EventBuilder };
+export default EventBuilder;

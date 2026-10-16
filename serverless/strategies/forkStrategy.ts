@@ -41,4 +41,5 @@ class ForkStrategy {
     }
 }
 
-export = ForkStrategy;
+export { ForkStrategy };
+export default ForkStrategy;
