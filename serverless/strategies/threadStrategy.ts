@@ -1,23 +1,23 @@
-const { Worker } = require('worker_threads');
-const path = require('path');
+import { Worker } from 'worker_threads';
+import { resolve as pathResolve } from 'path';
 
 class ThreadStrategy {
     /**
      * run method.
      *
-     * @async
-     * @param {any} modulePath
-     * @param {any} handlerName
-     * @param {any} event
-     * @returns {any}
+     * @param modulePath - Handler module path
+     * @param handlerName - Handler function name
+     * @param event - Event payload
+     * @param cwd - Working directory (optional)
+     * @returns Promise resolving to worker message
      */
-    async run(modulePath: any, handlerName: any, event: string) {
+    async run(modulePath: string, handlerName: string, event: unknown, cwd?: string): Promise<unknown> {
         return new Promise((resolve, reject) => {
-            const workerPath = path.resolve(__dirname, '../wrappers/threadWrapper.js');
-            const worker = new Worker(workerPath, {
+            const workerPath: string = pathResolve(__dirname, '../wrappers/threadWrapper.js');
+            const worker: Worker = new Worker(workerPath, {
                 workerData: { modulePath, handlerName, event }
             });
-            worker.on('message', (msg) => {
+            worker.on('message', (msg: any) => {
                 if (msg && msg.error) {
                     reject(new Error(msg.error));
                 } else {
@@ -25,11 +25,11 @@ class ThreadStrategy {
                 }
             });
             worker.on('error', reject);
-            worker.on('exit', (code) => {
+            worker.on('exit', (code: number) => {
                 if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`));
             });
         });
     }
 }
 
-module.exports = ThreadStrategy;
+export = ThreadStrategy;

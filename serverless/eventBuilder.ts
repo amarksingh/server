@@ -1,32 +1,56 @@
-const url = require('url');
-const { Buffer } = require('buffer');
+import { parse as parseUrl, UrlWithParsedQuery } from 'url';
+import { Buffer } from 'buffer';
+
+interface LambdaEvent {
+    version: string;
+    routeKey: string | null;
+    rawPath: string;
+    url: string;
+    query: any;
+    rawQueryString: string;
+    cookies: string[];
+    headers: Record<string, any>;
+    method: string;
+    params: Record<string, any>;
+    requestContext: {
+        http: {
+            method: string;
+            path: string | null;
+            protocol: string;
+            sourceIp: string;
+            userAgent: string;
+        };
+        timeEpoch: number;
+    };
+    isBase64Encoded: boolean;
+    body: string;
+}
 
 class EventBuilder {
     /**
      * fromHttpRequest method.
      *
-     * @static
-     * @param {any} req
-     * @returns {any}
+     * @param req - HTTP request object
+     * @returns Promise resolving to LambdaEvent
      */
-    static fromHttpRequest(req: any) {
+    static fromHttpRequest(req: any): Promise<LambdaEvent> {
         return new Promise((resolve) => {
-            const bodyChunks = [];
-            req.on('data', chunk => bodyChunks.push(chunk));
+            const bodyChunks: Buffer[] = [];
+            req.on('data', (chunk: Buffer) => bodyChunks.push(chunk));
             req.on('end', () => {
-                const rawBody = Buffer.concat(bodyChunks);
-                const isBinary = EventBuilder._isBinaryContent(req.headers['content-type']);
-                const body = isBinary ? rawBody.toString('base64') : rawBody.toString();
+                const rawBody: Buffer = Buffer.concat(bodyChunks);
+                const isBinary: boolean = EventBuilder._isBinaryContent(req.headers['content-type']);
+                const body: string = isBinary ? rawBody.toString('base64') : rawBody.toString();
 
-                const parsedUrl = url.parse(req.url, true);
-                const headers = req.headers;
+                const parsedUrl: UrlWithParsedQuery = parseUrl(req.url, true);
+                const headers: Record<string, any> = req.headers;
 
-                const cookies = headers.cookie
-                    ? headers.cookie.split(';').map(c => c.trim())
+                const cookies: string[] = headers.cookie
+                    ? headers.cookie.split(';').map((c: string) => c.trim())
                     : [];
 
-                const query = parsedUrl.query;
-                const rawQueryString = new URLSearchParams(query).toString();
+                const query: any = parsedUrl.query;
+                const rawQueryString: string = new URLSearchParams(query as any).toString();
 
                 resolve({
                     version: '2.0',
@@ -59,20 +83,19 @@ class EventBuilder {
     /**
      * _isBinaryContent method.
      *
-     * @static
-     * @param {any} contentType
-     * @returns {any}
+     * @param contentType - Content-Type header string
+     * @returns True if content is binary
      */
-    static _isBinaryContent(contentType: string = '') {
-        const textTypes = [
+    static _isBinaryContent(contentType: string = ''): boolean {
+        const textTypes: string[] = [
             'text/',
             'application/json',
             'application/xml',
             'application/javascript',
             'application/x-www-form-urlencoded',
         ];
-        return !textTypes.some(t => contentType.startsWith(t));
+        return !textTypes.some((t: string) => contentType.startsWith(t));
     }
 }
 
-module.exports = EventBuilder;
+export = EventBuilder;

@@ -1,33 +1,39 @@
-const LambdaSimulator = require('../serverless/lambdaSimulator');
+import LambdaSimulator from '../serverless/lambdaSimulator';
+import http from 'http';
+
 class ServerLess {
+    public $lambda!: LambdaSimulator;
+
     /**
      * constructor method.
      *
-     * @param {any} serverlessConfig
-     * @returns {any}
+     * @param serverlessConfig - Serverless configuration object
      */
     constructor(serverlessConfig: any) {
         Object.defineProperties(this, {
             $lambda: {
                 value: new LambdaSimulator(serverlessConfig)
             }
-        })
-
+        });
     }
 
     /**
      * handle method.
      *
-     * @param {any} request
-     * @param {any} response
-     * @returns {any}
+     * @param $request - Request constructor class
+     * @param $response - Response constructor class
+     * @returns Request handler function
      */
-    handle($request: any, $response: any) {
-        return (req, res) => {
+    handle($request: any, $response: any): (req: any, res: any) => Promise<void> {
+        return (req: any, res: any): Promise<void> => {
             req = new $request(req);
             res = new $response(res);
-            return this.$lambda.handleHttpRequest(req, res)
-        }
+            return this.$lambda.handleHttpRequest(req, res);
+        };
     }
 }
-module.exports = ServerLess;
+
+(ServerLess as any).__esModule = true;
+(ServerLess as any).default = ServerLess;
+
+export = ServerLess;

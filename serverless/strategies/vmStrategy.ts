@@ -1,54 +1,60 @@
-const fs = require('fs');
-const path = require('path');
-const vm = require('vm');
-const Module = require('module');
+import { readFileSync } from 'fs';
+import { dirname as pathDirname } from 'path';
+import { createContext, Script, Context } from 'vm';
+import { createRequire } from 'module';
 
 class VmStrategy {
-  async run(modulePath, handlerName, event) {
-    const resolvedModulePath = require.resolve(modulePath);
-    const code = fs.readFileSync(resolvedModulePath, 'utf8');
-    const moduleDir = path.dirname(resolvedModulePath);
-
-    // Create a custom require function that works as Node does, relative to the module path
-    const customRequire = Module.createRequire(resolvedModulePath);
-
-    const moduleObj = { exports: {} };
-    const sandbox = {
-      console,
-      require: customRequire,
-      module: moduleObj,
-      exports: moduleObj.exports,
-      process,
-      Buffer,
-      setTimeout,
-      setInterval,
-      clearTimeout,
-      clearInterval,
-      __filename: resolvedModulePath,
-      __dirname: moduleDir,
-    };
-
-    const context = vm.createContext(sandbox);
-    const script = new vm.Script(code, { filename: resolvedModulePath });
-    script.runInContext(context);
-
-    const handler = typeof sandbox.module.exports === 'function'
-      ? sandbox.module.exports
-      : sandbox.module.exports[handlerName];
-
     /**
-     * if method.
+     * run method.
      *
-     * @param {any} typeof handler !
-     * @returns {any}
+     * @param modulePath - Handler module path
+     * @param handlerName - Handler function name
+     * @param event - Event payload
+     * @param cwd - Working directory (optional)
+     * @returns Promise resolving to handler result
      */
-    if (typeof handler !== 'function') {
-      throw new Error(`Handler "${handlerName}" is not a function`);
-    }
+    async run(modulePath: string, handlerName: string, event: unknown, cwd?: string): Promise<unknown> {
+        const resolvedModulePath: string = require.resolve(modulePath);
+        const code: string = readFileSync(resolvedModulePath, 'utf8');
+        const moduleDir: string = pathDirname(resolvedModulePath);
 
-    const result = await Promise.resolve(handler(event));
-    return result;
-  }
+        // Create a custom require function that works as Node does, relative to the module path
+        const customRequire: NodeRequire = createRequire(resolvedModulePath);
+
+        const moduleObj: { exports: any } = { exports: {} };
+        const sandbox: Record<string, unknown> = {
+            console,
+            require: customRequire,
+            module: moduleObj,
+            exports: moduleObj.exports,
+            process,
+            Buffer,
+            setTimeout,
+            setInterval,
+            clearTimeout,
+            clearInterval,
+            __filename: resolvedModulePath,
+            __dirname: moduleDir,
+        };
+
+        const context: Context = createContext(sandbox);
+        const script: Script = new Script(code, { filename: resolvedModulePath });
+        script.runInContext(context);
+
+        const handler: unknown = typeof sandbox.module.exports === 'function'
+            ? sandbox.module.exports
+            : sandbox.module.exports[handlerName];
+
+        if (typeof handler !== 'function') {
+            throw new Error(`Handler "${handlerName}" is not a function`);
+        }
+
+        const result: unknown = await Promise.resolve((handler as Function)(event));
+        return result;
+    }
 }
 
-module.exports = VmStrategy;
+(VmStrategy as any).__esModule = true;
+(VmStrategy as any).default = VmStrategy;
+
+export = VmStrategy;

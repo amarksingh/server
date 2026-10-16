@@ -1,40 +1,49 @@
-require('@ostro/support/helpers')
-const ServerContract = require('@ostro/contracts/server/server')
-const path = require('path');
-const fs = require('fs')
-const kSsl = Symbol('ssl')
-const kServerType = Symbol('serverType')
-const kHttpVersion = Symbol('httpversion')
-const kStacks = Symbol('stack')
-const Serverless = require('./adapter/serverless')
-const HttpServer = require('./adapter/server');
+import '@ostro/support/helpers';
+import ServerContract from '@ostro/contracts/server/server';
+import { isAbsolute as pathIsAbsolute, resolve as pathResolve } from 'path';
+import { readFileSync } from 'fs';
+import http from 'http';
+import https from 'https';
+import http2 from 'http2';
+import Serverless from './adapter/serverless';
+import HttpServer from './adapter/server';
 
-var httpTypes = {
+const kSsl: unique symbol = Symbol('ssl');
+const kServerType: unique symbol = Symbol('serverType');
+const kHttpVersion: unique symbol = Symbol('httpversion');
+const kStacks: unique symbol = Symbol('stack');
+
+interface HttpStarterConfig {
+    module: any;
+    starter: string;
+}
+
+const httpTypes: Record<string, HttpStarterConfig> = {
     http2: {
-        module: 'http2',
+        module: http2,
         starter: 'createServer',
     },
     https2: {
-        module: 'http2',
+        module: http2,
         starter: 'createSecureServer',
     },
     https: {
-        module: 'https',
+        module: https,
         starter: 'createServer',
     },
     http: {
-        module: 'http',
+        module: http,
         starter: 'createServer',
     }
-}
+};
 
-function creatSslConfig(ssl, httpVersion) {
-    let obj = Object.create(null)
+function creatSslConfig(ssl: any, httpVersion: string): Record<string, any> {
+    const obj: Record<string, any> = Object.create(null);
     /**
      * switch method.
      *
-     * @param {any} httpVersion
-     * @returns {any}
+     * @param httpVersion - HTTP protocol version
+     * @returns SSL configuration object
      */
     switch (httpVersion) {
         case 'https':
@@ -50,21 +59,28 @@ function creatSslConfig(ssl, httpVersion) {
         default:
             break;
     }
-    return obj
-
+    return obj;
 }
+
 class Server extends ServerContract {
+    public $port: number | string;
+    public $host: string;
+    public $serverlessConfig?: any;
+    public $request?: any;
+    public $response?: any;
+    [kHttpVersion]: string;
+    [kSsl]: any;
+    [kServerType]: string;
+    [kStacks]: any[];
 
     /**
      * constructor method.
      *
-     * @param {any} {app
-     * @param {any} serverless}
-     * @returns {any}
+     * @param options - Server configuration options
      */
-    constructor({app,serverless}: Record<string, any> = {}) {
-        super()
-        const config = resolveConfig(app);
+    constructor({ app, serverless }: Record<string, any> = {}) {
+        super();
+        const config: any = resolveConfig(app);
         this.$port = config.port !== undefined ? config.port : 8080;
         this.$host = config.host || '127.0.0.1';
         this[kHttpVersion] = config.http_version;
@@ -77,11 +93,11 @@ class Server extends ServerContract {
     /**
      * register method.
      *
-     * @param {any} path
-     * @param {any} handle
-     * @returns {any}
+     * @param path - Route path or middleware handler
+     * @param handle - Middleware handler or array of handlers
+     * @returns Server instance
      */
-    register(path: string, handle: any) {
+    register(path: string | any, handle?: any): this {
         if (typeof path !== 'string') {
             handle = path;
             path = '/';
@@ -94,12 +110,12 @@ class Server extends ServerContract {
                     handle: cb
                 });
             }
-            return this
+            return this;
         }
         if (typeof handle.handle === 'function') {
-            var server = handle;
+            const server: any = handle;
             server.route = path;
-            handle = function (req, res, next) {
+            handle = function (req: any, res: any, next: (err?: unknown) => void): void {
                 server.handle(req, res, next);
             };
         }
@@ -111,68 +127,69 @@ class Server extends ServerContract {
 
         return this;
     }
+
     /**
      * createServerConfig method.
      *
-     * @returns {any}
+     * @returns Server SSL/TLS configuration object
      */
-    createServerConfig() {
-        return Object.assign(creatSslConfig(this[kSsl], this[kHttpVersion]))
+    createServerConfig(): Record<string, any> {
+        return Object.assign(creatSslConfig(this[kSsl], this[kHttpVersion]));
     }
 
     /**
      * address method.
      *
-     * @param {any} options
-     * @returns {any}
+     * @param options - Address options
+     * @returns Resolved socket path or address object
      */
-    address(options: Record<string, any> = {}) {
-        if (path.isAbsolute(String(options.port || ' '))) {
-            return options.port
+    address(options: Record<string, any> = {}): any {
+        if (pathIsAbsolute(String(options.port || ' '))) {
+            return options.port;
         } else {
             return {
                 port: options.port !== undefined ? options.port : this.$port,
                 host: options.host !== undefined ? options.host : this.$host,
                 cert: options.cert,
                 key: options.key
-            }
+            };
         }
     }
 
     /**
      * request method.
      *
-     * @param {any} HttpRequest
-     * @returns {any}
+     * @param HttpRequest - Request class/constructor
+     * @returns Server instance
      */
-    request(HttpRequest: any) {
+    request(HttpRequest: any): this {
         if (typeof HttpRequest != 'function') {
-            throw new Error('HttpRequest class must be function/class')
+            throw new Error('HttpRequest class must be function/class');
         }
-        Object.defineProperty(this, '$request', { value: HttpRequest })
+        Object.defineProperty(this, '$request', { value: HttpRequest });
         return this;
     }
 
     /**
      * response method.
      *
-     * @param {any} HttpResponse
-     * @returns {any}
+     * @param HttpResponse - Response class/constructor
+     * @returns Server instance
      */
-    response(HttpResponse: any) {
+    response(HttpResponse: any): this {
         if (typeof HttpResponse != 'function') {
-            throw new Error('HttpResponse class must function/class')
+            throw new Error('HttpResponse class must function/class');
         }
-        Object.defineProperty(this, '$response', { value: HttpResponse })
+        Object.defineProperty(this, '$response', { value: HttpResponse });
         return this;
     }
 
     /**
      * handle method.
      *
-     * @returns {any}
+     * @returns Request dispatcher function
      */
-    handle() {
+    handle(): (...args: any[]) => any {
         if (this[kServerType] == 'serverless') {
             return (new Serverless(this.$serverlessConfig)).handle(this.$request, this.$response);
         } else if (this[kServerType] == 'server') {
@@ -184,10 +201,10 @@ class Server extends ServerContract {
     /**
      * type method.
      *
-     * @param {any} type
-     * @returns {any}
+     * @param type - Server type ('server' or 'serverless')
+     * @returns Server instance
      */
-    type(type: string) {
+    type(type: string): this {
         this[kServerType] = type;
         return this;
     }
@@ -195,18 +212,18 @@ class Server extends ServerContract {
     /**
      * start method.
      *
-     * @param {any} options
-     * @param {any} cb
-     * @returns {any}
+     * @param options - Listen options or callback
+     * @param cb - Callback function
+     * @returns Server instance
      */
-    start(options: Record<string, any>, cb: any) {
-        let args = Array.from(arguments)
-        let rawOptions = args.find(arg => typeof arg == 'object' || typeof arg == 'string') || {}
-        cb = args.find(arg => typeof arg == 'function')
+    start(options?: Record<string, any> | string | ((info: any) => void), cb?: any): any {
+        const args: any[] = Array.from(arguments);
+        let rawOptions: any = args.find((arg: any) => typeof arg == 'object' || typeof arg == 'string') || {};
+        cb = args.find((arg: any) => typeof arg == 'function');
         rawOptions = typeof rawOptions === 'string' ? { port: rawOptions } : rawOptions;
-        let resolvedAddress = this.address(rawOptions)
-        let httpConfig = httpTypes[this[kHttpVersion]]
-        let http = require(httpConfig.module)
+        const resolvedAddress: any = this.address(rawOptions);
+        const httpConfig: HttpStarterConfig = httpTypes[this[kHttpVersion]];
+        const httpModule: any = httpConfig.module;
 
         if (typeof resolvedAddress === 'string') {
             this.$port = resolvedAddress;
@@ -214,57 +231,59 @@ class Server extends ServerContract {
             this.$port = resolvedAddress.port;
             this.$host = resolvedAddress.host;
         }
-        const listenTarget = path.isAbsolute(this.$port.toString()) ? this.$port : { port: this.$port, host: this.$host };
-        return http[httpConfig.starter](this.createServerConfig(), this.handle())
+        const listenTarget: any = pathIsAbsolute(this.$port.toString()) ? this.$port : { port: this.$port, host: this.$host };
+        return httpModule[httpConfig.starter](this.createServerConfig(), this.handle())
             .listen(listenTarget, () => {
                 if (typeof cb == 'function') {
                     cb({
                         port: this.$port,
                         host: this.$host,
                         server: ''
-                    })
+                    });
                 } else {
-                    console.log(`Application Running on ${path.isAbsolute(this.$port.toString()) ? 'pipe : ' + this.$port : ': ' + this.$host + ':' + this.$port}`)
+                    console.log(`Application Running on ${pathIsAbsolute(this.$port.toString()) ? 'pipe : ' + this.$port : ': ' + this.$host + ':' + this.$port}`);
                 }
             });
     }
-
 }
 
-function resolveConfig(config = {}) {
+function resolveConfig(config: Record<string, any> = {}): Record<string, any> {
     config.ssl = {
         'key': undefined,
         'cert': undefined,
         ...(config.ssl || {})
-    }
-    config.http_version = config.http_version || 'http'
+    };
+    config.http_version = config.http_version || 'http';
     /**
      * if method.
      *
-     * @param {any} config.http_version
-     * @returns {any}
+     * @param config.http_version - HTTP protocol version
+     * @returns Resolved configuration
      */
     if (config.http_version == 'https' || config.http_version == "https2") {
         if (typeof config.ssl.key == 'string') {
-            config.ssl.key = path.isAbsolute(config.ssl.key) ? fs.readFileSync(config.ssl.key) : fs.readFileSync(path.resolve(config.ssl.key));
+            config.ssl.key = pathIsAbsolute(config.ssl.key) ? readFileSync(config.ssl.key) : readFileSync(pathResolve(config.ssl.key));
         }
         if (typeof config.ssl.cert == 'string') {
-            config.ssl.cert = path.isAbsolute(config.ssl.cert) ? fs.readFileSync(config.ssl.cert) : fs.readFileSync(path.resolve(config.ssl.cert));
+            config.ssl.cert = pathIsAbsolute(config.ssl.cert) ? readFileSync(config.ssl.cert) : readFileSync(pathResolve(config.ssl.cert));
         }
         if (typeof config.ssl.ca == 'string') {
-            config.ssl.ca = path.isAbsolute(config.ssl.ca) ? fs.readFileSync(config.ssl.ca) : fs.readFileSync(path.resolve(config.ssl.ca));
+            config.ssl.ca = pathIsAbsolute(config.ssl.ca) ? readFileSync(config.ssl.ca) : readFileSync(pathResolve(config.ssl.ca));
         }
     }
     /**
      * if method.
      *
-     * @param {any} config.port !
-     * @returns {any}
+     * @param config.port - Server port
+     * @returns Resolved configuration
      */
     if (config.port !== undefined) {
-        config.port = parseInt(config.port)
+        config.port = parseInt(config.port);
     }
-    return config
+    return config;
 }
 
-module.exports = Server;
+(Server as any).__esModule = true;
+(Server as any).default = Server;
+
+export = Server;

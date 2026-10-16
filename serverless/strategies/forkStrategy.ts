@@ -1,24 +1,23 @@
-const { fork } = require('child_process');
-const path = require('path');
+import { fork, ChildProcess } from 'child_process';
+import { resolve as pathResolve } from 'path';
 
 class ForkStrategy {
     /**
      * run method.
      *
-     * @async
-     * @param {any} modulePath
-     * @param {any} handlerName
-     * @param {any} event
-     * @param {any} cwd
-     * @returns {any}
+     * @param modulePath - Handler module path
+     * @param handlerName - Handler function name
+     * @param event - Event payload
+     * @param cwd - Working directory
+     * @returns Promise resolving to result
      */
-    async run(modulePath: any, handlerName: any, event: string, cwd: any) {
+    async run(modulePath: string, handlerName: string, event: unknown, cwd?: string): Promise<unknown> {
         return new Promise((resolve, reject) => {
-            const forkWrapper = path.resolve(__dirname, '../wrappers/frokWrapper.js');
-            const child = fork(forkWrapper, [modulePath, handlerName], { cwd, stdio: ['pipe', 'pipe', 'pipe', 'ipc'] });
+            const forkWrapper: string = pathResolve(__dirname, '../wrappers/frokWrapper.js');
+            const child: ChildProcess = fork(forkWrapper, [modulePath, handlerName], { cwd, stdio: ['pipe', 'pipe', 'pipe', 'ipc'] });
 
-            let settled = false;
-            child.on('message', (msg) => {
+            let settled: boolean = false;
+            child.on('message', (msg: any) => {
                 settled = true;
                 if (msg.error) {
                     reject(new Error(msg.error));
@@ -27,11 +26,11 @@ class ForkStrategy {
                 }
             });
 
-            child.on('error', (err) => {
+            child.on('error', (err: Error) => {
                 settled = true;
                 reject(err);
             });
-            child.on('exit', (code) => {
+            child.on('exit', (code: number | null) => {
                 if (!settled && code !== 0) {
                     reject(new Error(`Forked process exited with code ${code}`));
                 }
@@ -42,4 +41,4 @@ class ForkStrategy {
     }
 }
 
-module.exports = ForkStrategy;
+export = ForkStrategy;

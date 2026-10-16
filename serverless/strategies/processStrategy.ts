@@ -1,55 +1,54 @@
-const { spawn } = require('child_process');
-const path = require('path');
+import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
+import { resolve as pathResolve } from 'path';
 
 class ProcessStrategy {
     /**
      * run method.
      *
-     * @async
-     * @param {any} modulePath
-     * @param {any} handlerName
-     * @param {any} event
-     * @param {any} cwd
-     * @returns {any}
+     * @param modulePath - Handler module path
+     * @param handlerName - Handler function name
+     * @param event - Event payload
+     * @param cwd - Working directory
+     * @returns Promise resolving to parsed result
      */
-    async run(modulePath: any, handlerName: any, event: string, cwd: any) {
+    async run(modulePath: string, handlerName: string, event: unknown, cwd?: string): Promise<unknown> {
         return new Promise((resolve, reject) => {
-            const wrapper = path.resolve(__dirname, '../wrappers/workerWrapper.js');
-            const child = spawn(
+            const wrapper: string = pathResolve(__dirname, '../wrappers/workerWrapper.js');
+            const child: ChildProcessWithoutNullStreams = spawn(
                 process.execPath,
                 [wrapper, modulePath, handlerName],
                 { stdio: ['pipe', 'pipe', 'pipe'], cwd }
             );
 
-            const stdoutChunks = [];
-            const stderrChunks = [];
+            const stdoutChunks: Buffer[] = [];
+            const stderrChunks: Buffer[] = [];
 
-            child.stdout.on('data', (chunk) => stdoutChunks.push(chunk));
-            child.stderr.on('data', (chunk) => stderrChunks.push(chunk));
+            child.stdout.on('data', (chunk: Buffer) => stdoutChunks.push(chunk));
+            child.stderr.on('data', (chunk: Buffer) => stderrChunks.push(chunk));
 
-            child.on('close', (code) => {
-                const stdout = Buffer.concat(stdoutChunks).toString();
-                const stderr = Buffer.concat(stderrChunks).toString();
+            child.on('close', (code: number | null) => {
+                const stdout: string = Buffer.concat(stdoutChunks).toString();
+                const stderr: string = Buffer.concat(stderrChunks).toString();
 
                 if (code !== 0) {
                     return reject(new Error(stderr || `Exit code ${code}`));
                 }
 
-                const logs = stdout.split('\n<<<__LAMBDA_RESULT__>>>')[0];;
+                const logs: string = stdout.split('\n<<<__LAMBDA_RESULT__>>>')[0];
                 if (logs) {
                     console.log(logs);
                 }
 
-                const resultMatch = stdout.match(/\n<<<__LAMBDA_RESULT__>>>\n([\s\S]*?)\n<<<__END__>>>\n?/);
+                const resultMatch: RegExpMatchArray | null = stdout.match(/\n<<<__LAMBDA_RESULT__>>>\n([\s\S]*?)\n<<<__END__>>>\n?/);
                 if (!resultMatch) {
                     return reject(new Error('No valid Lambda result found in output:\n' + stdout));
                 }
 
                 try {
-                    const result = JSON.parse(resultMatch[1]);
+                    const result: unknown = JSON.parse(resultMatch[1]);
                     resolve(result);
-                } catch (err) {
-                    reject(new Error('Failed to parse Lambda result JSON: ' + err.message));
+                } catch (err: any) {
+                    reject(new Error('Failed to parse Lambda result JSON: ' + (err as Error).message));
                 }
             });
 
@@ -59,4 +58,4 @@ class ProcessStrategy {
     }
 }
 
-module.exports = ProcessStrategy;
+export = ProcessStrategy;

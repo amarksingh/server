@@ -1,24 +1,34 @@
-const LambdaWorker = require('./lambdaWorker');
-const EventBuilder = require('./eventBuilder');
-const ResponseSender = require('./responseSender');
-const path = require('path');
+import { resolve as pathResolve, isAbsolute as pathIsAbsolute } from 'path';
+import LambdaWorker from './lambdaWorker';
+import EventBuilder from './eventBuilder';
+import ResponseSender from './responseSender';
+
+interface ServerlessConfig {
+    handler: string;
+    strategy?: string;
+    [key: string]: unknown;
+}
 
 class LambdaSimulator {
+    public $strategy!: string;
+    public readonly $modulePath!: string;
+    public readonly $handlerName!: string;
+    public readonly $serverless!: ServerlessConfig;
+
     /**
      * constructor method.
      *
-     * @param {any} serverlessConfig
-     * @returns {any}
+     * @param serverlessConfig - Serverless configuration object
      */
-    constructor(serverlessConfig: any) {
-        let handlerString = serverlessConfig.handler
-        if (!path.isAbsolute(handlerString)) {
-            handlerString = path.resolve(process.cwd(), handlerString);
+    constructor(serverlessConfig: ServerlessConfig) {
+        let handlerString: string = serverlessConfig.handler;
+        if (!pathIsAbsolute(handlerString)) {
+            handlerString = pathResolve(process.cwd(), handlerString);
         }
-        const lastDot = handlerString.lastIndexOf('.');
+        const lastDot: number = handlerString.lastIndexOf('.');
         if (lastDot === -1) throw new Error('Handler must be in format <path>.<function>');
 
-        const modulePath = handlerString.substring(0, lastDot);
+        const modulePath: string = handlerString.substring(0, lastDot);
         Object.defineProperties(this, {
             $strategy: {
                 value: 'process',
@@ -41,18 +51,16 @@ class LambdaSimulator {
     /**
      * handleHttpRequest method.
      *
-     * @async
-     * @param {any} req
-     * @param {any} res
-     * @returns {any}
+     * @param req - HTTP request object
+     * @param res - HTTP response object
      */
-    async handleHttpRequest(req: any, res: any) {
-        const event = await EventBuilder.fromHttpRequest(req);
+    async handleHttpRequest(req: any, res: any): Promise<void> {
+        const event: unknown = await EventBuilder.fromHttpRequest(req);
         try {
             const worker = LambdaWorker.create(this.$serverless.strategy); // or 'vm', 'process', 'fork'
             const result = await worker.run(this.$modulePath, this.$handlerName, event);
-            ResponseSender.sendSuccess(res, result);
-        } catch (err) {
+            ResponseSender.sendSuccess(res, result as any);
+        } catch (err: unknown) {
             ResponseSender.sendError(res, err);
         }
     }
@@ -60,14 +68,16 @@ class LambdaSimulator {
     /**
      * handleEvent method.
      *
-     * @async
-     * @param {any} event
-     * @returns {any}
+     * @param event - Event data
+     * @returns Handler execution result
      */
-    async handleEvent(event: string) {
+    async handleEvent(event: unknown): Promise<unknown> {
         const worker = LambdaWorker.create(this.$serverless.strategy);
         return await worker.run(this.$modulePath, this.$handlerName, event);
     }
 }
 
-module.exports = LambdaSimulator;
+(LambdaSimulator as any).__esModule = true;
+(LambdaSimulator as any).default = LambdaSimulator;
+
+export = LambdaSimulator;

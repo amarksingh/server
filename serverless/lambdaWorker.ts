@@ -1,42 +1,51 @@
-const path = require('path');
-const VmStrategy = require('./strategies/vmStrategy');
-const ThreadStrategy = require('./strategies/threadStrategy');
-const ProcessStrategy = require('./strategies/processStrategy');
-const ForkStrategy = require('./strategies/forkStrategy');
+import { dirname as pathDirname } from 'path';
+import VmStrategy from './strategies/vmStrategy';
+import ThreadStrategy from './strategies/threadStrategy';
+import ProcessStrategy from './strategies/processStrategy';
+import ForkStrategy from './strategies/forkStrategy';
+
+interface WorkerStrategy {
+    run(modulePath: string, handlerName: string, event: unknown, cwd?: string): Promise<unknown>;
+}
+
+interface WorkerRunOptions {
+    cwd?: string;
+    [key: string]: unknown;
+}
 
 class LambdaWorker {
+    public strategy: WorkerStrategy;
+
     /**
      * constructor method.
      *
-     * @param {any} strategy
-     * @returns {any}
+     * @param strategy - Worker strategy instance
      */
-    constructor(strategy: any) {
+    constructor(strategy: WorkerStrategy) {
         this.strategy = strategy;
     }
 
     /**
      * run method.
      *
-     * @param {any} modulePath
-     * @param {any} handlerName
-     * @param {any} event
-     * @param {any} options
-     * @returns {any}
+     * @param modulePath - Handler module path
+     * @param handlerName - Handler function name
+     * @param event - Event payload
+     * @param options - Execution options
+     * @returns Result of strategy run
      */
-    run(modulePath: any, handlerName: any, event: string, options: Record<string, any> = {}) {
-        const cwd = options.cwd || path.dirname(modulePath);
+    run(modulePath: string, handlerName: string, event: unknown, options: WorkerRunOptions = {}): Promise<unknown> {
+        const cwd: string = options.cwd || pathDirname(modulePath);
         return this.strategy.run(modulePath, handlerName, event, cwd);
     }
 
     /**
      * create method.
      *
-     * @static
-     * @param {any} strategyName
-     * @returns {any}
+     * @param strategyName - Strategy name ('vm', 'thread', 'fork', 'process')
+     * @returns LambdaWorker instance
      */
-    static create(strategyName: any) {
+    static create(strategyName?: string): LambdaWorker {
         switch (strategyName) {
             case 'vm': return new LambdaWorker(new VmStrategy());
             case 'thread': return new LambdaWorker(new ThreadStrategy());
@@ -47,4 +56,7 @@ class LambdaWorker {
     }
 }
 
-module.exports = LambdaWorker;
+(LambdaWorker as any).__esModule = true;
+(LambdaWorker as any).default = LambdaWorker;
+
+export = LambdaWorker;

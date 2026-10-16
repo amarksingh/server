@@ -1,13 +1,22 @@
-exports.logerror = function logerror(err) {
-    if ((process.env.NODE_ENV || 'development') !== 'test') console.error(err.stack || err.toString());
+export function logerror(err: unknown): void {
+    if ((process.env.NODE_ENV || 'development') !== 'test') {
+        console.error((err as any).stack || (err as any).toString());
+    }
 }
 
-exports.env = process.env.NODE_ENV || 'development'
+export const env: string = process.env.NODE_ENV || 'development';
 
-exports.call = function call(handle, route, err, req, res, next) {
-    var arity = handle.length;
-    var error = err;
-    var hasError = Boolean(err);
+export function call(
+    handle: (...args: any[]) => any,
+    route: string,
+    err: unknown,
+    req: unknown,
+    res: unknown,
+    next: (err?: unknown) => void
+): void {
+    const arity: number = handle.length;
+    let error: unknown = err;
+    const hasError: boolean = Boolean(err);
 
     try {
         if (hasError && arity === 4) {
@@ -17,39 +26,47 @@ exports.call = function call(handle, route, err, req, res, next) {
             Promise.resolve(handle(req, res, next)).catch(next);
             return;
         }
-    } catch (e) {
+    } catch (e: unknown) {
         error = e;
     }
     next(error);
 }
 
-exports.getProtohost = function getProtohost(url) {
+export function getProtohost(url: string): string | undefined {
     /**
      * if method.
      *
-     * @param {any} url.length
-     * @returns {any}
+     * @param url - The URL string to parse
+     * @returns The protohost or undefined
      */
     if (url.length === 0 || url[0] === '/') {
         return undefined;
     }
 
-    var fqdnIndex = url.indexOf('://')
+    const fqdnIndex: number = url.indexOf('://');
 
-    return fqdnIndex !== -1 && url.lastIndexOf('?', fqdnIndex) === -1 ?
-        url.substr(0, url.indexOf('/', 3 + fqdnIndex)) :
-        undefined;
+    return fqdnIndex !== -1 && url.lastIndexOf('?', fqdnIndex) === -1
+        ? url.substr(0, url.indexOf('/', 3 + fqdnIndex))
+        : undefined;
 }
 
-exports.defer = typeof setImmediate === 'function' ?
-    setImmediate :
-    /**
-     * function method.
-     *
-     * @param {any} fn
-     * @returns {any}
-     */
-    function(fn: Function) {
-        process.nextTick(fn.bind.apply(fn, arguments))
-    }
+export const defer: (fn: (...args: any[]) => any, ...args: any[]) => void = typeof setImmediate === 'function'
+    ? setImmediate
+    : /**
+       * fallback defer method using process.nextTick.
+       *
+       * @param fn - Function to defer
+       */
+      function (fn: (...args: any[]) => any, ...args: any[]): void {
+          process.nextTick(fn.bind.apply(fn, arguments as any));
+      };
 
+const utils = {
+    logerror,
+    env,
+    call,
+    getProtohost,
+    defer
+};
+
+export default utils;
