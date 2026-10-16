@@ -41,9 +41,9 @@ class VmStrategy {
         const script: Script = new Script(code, { filename: resolvedModulePath });
         script.runInContext(context);
 
-        const handler: unknown = typeof sandbox.module.exports === 'function'
-            ? sandbox.module.exports
-            : sandbox.module.exports[handlerName];
+        const handler: unknown = typeof moduleObj.exports === 'function'
+            ? moduleObj.exports
+            : moduleObj.exports[handlerName];
 
         if (typeof handler !== 'function') {
             throw new Error(`Handler "${handlerName}" is not a function`);

@@ -1,5 +1,6 @@
 import utils from '../utils';
 import { parse as parseUrl } from 'url';
+// @ts-ignore
 import finalhandler from 'finalhandler';
 
 interface StackLayer {

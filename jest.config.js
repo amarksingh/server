@@ -20,8 +20,13 @@ module.exports = {
         "!**/node_modules/**",
         "!**/vendor/**",
         "!**/coverage/**",
+        "!**/build/**",
         "!jest.config.js",
         "!test/**"
+    ],
+    "testPathIgnorePatterns": [
+        "/node_modules/",
+        "/build/"
     ],
     "coverageThreshold": {
         "global": {
