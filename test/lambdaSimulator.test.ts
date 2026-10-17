@@ -1,4 +1,4 @@
-const _LambdaSimulator = require("../serverless/lambdaSimulator");
+const _LambdaSimulator = require("../src/serverless/lambdaSimulator");
 const LambdaSimulator = _LambdaSimulator.default || _LambdaSimulator;
 const path = require("path");
 

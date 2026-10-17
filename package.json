@@ -24,8 +24,8 @@
     "start": "node build/server.js"
   },
   "dependencies": {
-    "@ostro/support": "^2.0.0-alpha.1",
     "@ostro/contracts": "^2.0.0-alpha.1",
+    "@ostro/support": "^2.0.0-alpha.1",
     "finalhandler": "^1.1.2"
   },
   "engines": {
@@ -48,7 +48,7 @@
   },
   "homepage": "https://github.com/ostrojs/server#readme",
   "devDependencies": {
-    "typescript": "^5.8.0",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.20.5",
+    "typescript": "^5.8.0"
   }
 }

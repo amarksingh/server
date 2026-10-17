@@ -1,4 +1,4 @@
-const _utils = require('../utils');
+const _utils = require('../src/utils');
 const utils = _utils.default || _utils;
 
 describe('server utils', () => {
@@ -10,9 +10,9 @@ describe('server utils', () => {
 
         // test with env !== 'test'
         const origEnv = process.env.NODE_ENV;
-        delete require.cache[require.resolve('../utils')];
+        delete require.cache[require.resolve('../src/utils')];
         process.env.NODE_ENV = 'development';
-        const _reloadedUtils = require('../utils');
+        const _reloadedUtils = require('../src/utils');
 const reloadedUtils = _reloadedUtils.default || _reloadedUtils;
         
         reloadedUtils.logerror(new Error('dev err'));
@@ -26,7 +26,7 @@ const reloadedUtils = _reloadedUtils.default || _reloadedUtils;
         // test when process.env.NODE_ENV is empty/undefined
         delete process.env.NODE_ENV;
         jest.isolateModules(() => {
-            const _noEnvUtils = require('../utils');
+            const _noEnvUtils = require('../src/utils');
 const noEnvUtils = _noEnvUtils.default || _noEnvUtils;
             expect(noEnvUtils.env).toBe('development');
             noEnvUtils.logerror(new Error('no env err'));
@@ -35,7 +35,7 @@ const noEnvUtils = _noEnvUtils.default || _noEnvUtils;
 
         // restore
         process.env.NODE_ENV = origEnv;
-        delete require.cache[require.resolve('../utils')];
+        delete require.cache[require.resolve('../src/utils')];
         consoleSpy.mockRestore();
     });
 
@@ -123,7 +123,7 @@ const noEnvUtils = _noEnvUtils.default || _noEnvUtils;
             delete global.setImmediate;
             global.setImmediate = undefined;
             jest.isolateModules(() => {
-                const _utilsFallback = require('../utils');
+                const _utilsFallback = require('../src/utils');
 const utilsFallback = _utilsFallback.default || _utilsFallback;
                 utilsFallback.defer((val) => {
                     expect(val).toBe('fallback');

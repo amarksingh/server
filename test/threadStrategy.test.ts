@@ -1,4 +1,4 @@
-const _ThreadStrategy = require("../serverless/strategies/threadStrategy");
+const _ThreadStrategy = require("../src/serverless/strategies/threadStrategy");
 const ThreadStrategy = _ThreadStrategy.default || _ThreadStrategy;
 const path = require("path");
 const fs = require("fs");

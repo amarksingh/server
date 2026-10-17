@@ -1,4 +1,4 @@
-const _ResponseSender = require("../serverless/responseSender");
+const _ResponseSender = require("../src/serverless/responseSender");
 const ResponseSender = _ResponseSender.default || _ResponseSender;
 
 describe("ResponseSender (serverless/responseSender.js)", () => {

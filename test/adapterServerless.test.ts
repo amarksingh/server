@@ -1,4 +1,4 @@
-const _ServerLess = require("../adapter/serverless");
+const _ServerLess = require("../src/adapter/serverless");
 const ServerLess = _ServerLess.default || _ServerLess;
 const path = require("path");
 

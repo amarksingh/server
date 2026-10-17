@@ -1,4 +1,4 @@
-const _Server = require("../server");
+const _Server = require("../src/server");
 const Server = _Server.default || _Server;
 const fs = require("fs");
 const path = require("path");

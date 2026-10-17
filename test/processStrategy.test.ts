@@ -1,4 +1,4 @@
-const _ProcessStrategy = require("../serverless/strategies/processStrategy");
+const _ProcessStrategy = require("../src/serverless/strategies/processStrategy");
 const ProcessStrategy = _ProcessStrategy.default || _ProcessStrategy;
 const path = require("path");
 const fs = require("fs");

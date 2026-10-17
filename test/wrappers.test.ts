@@ -18,7 +18,7 @@ describe('Serverless Wrappers', () => {
     });
 
     describe('workerWrapper.js', () => {
-        const workerWrapperPath = path.resolve(__dirname, '../serverless/wrappers/workerWrapper.js');
+        const workerWrapperPath = path.resolve(__dirname, '../src/serverless/wrappers/workerWrapper.js');
 
         test('executes handler when module exports a default function', (done) => {
             const child = spawn(process.execPath, [workerWrapperPath, defaultExportFixture, 'default']);
@@ -65,7 +65,7 @@ describe('Serverless Wrappers', () => {
     });
 
     describe('threadWrapper.js', () => {
-        const threadWrapperPath = path.resolve(__dirname, '../serverless/wrappers/threadWrapper.js');
+        const threadWrapperPath = path.resolve(__dirname, '../src/serverless/wrappers/threadWrapper.js');
 
         test('handles default export function and executes successfully', (done) => {
             const worker = new Worker(threadWrapperPath, {
@@ -100,7 +100,7 @@ describe('Serverless Wrappers', () => {
     });
 
     describe('frokWrapper.js', () => {
-        const frokWrapperPath = path.resolve(__dirname, '../serverless/wrappers/frokWrapper.js');
+        const frokWrapperPath = path.resolve(__dirname, '../src/serverless/wrappers/frokWrapper.js');
 
         test('handles default export function', (done) => {
             const child = fork(frokWrapperPath, [defaultExportFixture, 'default'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] });

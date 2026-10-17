@@ -7,16 +7,18 @@ module.exports = {
         "../foundation/node_modules"
     ],
     "moduleNameMapper": {
-        "^@ostro/support/(.*)$": "<rootDir>/../support/$1",
-        "^@ostro/support$": "<rootDir>/../support",
-        "^@ostro/contracts/(.*)$": "<rootDir>/../contracts/$1",
-        "^@ostro/contracts$": "<rootDir>/../contracts",
+        "^@ostro/support/(.*)$": "<rootDir>/../support/src/$1",
+        "^@ostro/support$": "<rootDir>/../support/src",
+        "^@ostro/contracts/(.*)$": "<rootDir>/../contracts/src/$1",
+        "^@ostro/contracts$": "<rootDir>/../contracts/src",
+        "^@ostro/server/(.*)$": "<rootDir>/src/$1",
+        "^@ostro/server$": "<rootDir>/src/server",
         "^finalhandler$": "<rootDir>/../foundation/node_modules/finalhandler"
     },
     "coverageDirectory": "coverage",
     "collectCoverageFrom": [
-        "**/*.ts",
-        "serverless/wrappers/**/*.js",
+        "src/**/*.ts",
+        "src/serverless/wrappers/**/*.js",
         "!**/node_modules/**",
         "!**/vendor/**",
         "!**/coverage/**",

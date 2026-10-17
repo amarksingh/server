@@ -7,7 +7,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "./build",
-    "rootDir": ".",
+    "rootDir": "src",
     "skipLibCheck": true,
     "noImplicitAny": false,
     "strict": false,
@@ -22,9 +22,8 @@
     ]
   },
   "include": [
-    "./*.ts",
-    "**/*.ts",
-    "serverless/wrappers/**/*.js"
+    "src/**/*.ts",
+    "src/serverless/wrappers/**/*.js"
   ],
   "exclude": [
     "node_modules",

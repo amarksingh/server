@@ -1,12 +1,12 @@
-const _LambdaWorker = require("../serverless/lambdaWorker");
+const _LambdaWorker = require("../src/serverless/lambdaWorker");
 const LambdaWorker = _LambdaWorker.default || _LambdaWorker;
-const _VmStrategy = require("../serverless/strategies/vmStrategy");
+const _VmStrategy = require("../src/serverless/strategies/vmStrategy");
 const VmStrategy = _VmStrategy.default || _VmStrategy;
-const _ThreadStrategy = require("../serverless/strategies/threadStrategy");
+const _ThreadStrategy = require("../src/serverless/strategies/threadStrategy");
 const ThreadStrategy = _ThreadStrategy.default || _ThreadStrategy;
-const _ForkStrategy = require("../serverless/strategies/forkStrategy");
+const _ForkStrategy = require("../src/serverless/strategies/forkStrategy");
 const ForkStrategy = _ForkStrategy.default || _ForkStrategy;
-const _ProcessStrategy = require("../serverless/strategies/processStrategy");
+const _ProcessStrategy = require("../src/serverless/strategies/processStrategy");
 const ProcessStrategy = _ProcessStrategy.default || _ProcessStrategy;
 const path = require("path");
 
