@@ -85,7 +85,9 @@ class Server {
                 }
                 const layer = stack[index++];
                 if (!layer) {
-                    utils.defer(done, err);
+                    if (!rawRes.headersSent && !res.headersSent) {
+                        utils.defer(done, err);
+                    }
                     return;
                 }
                 const path: string = (protohost ? req.url.substr(protohost.length) : req.url) || '/';
