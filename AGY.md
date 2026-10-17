@@ -1,7 +1,7 @@
 # @ostro/server — Antigravity AI Architecture & Knowledge Base
 
 > **Package Name**: `@ostro/server`
-> **Version**: `1.3.10`
+> **Version**: `2.0.0-alpha.1`
 > **Role in Ecosystem**: Modular Core Framework Library
 
 ---
