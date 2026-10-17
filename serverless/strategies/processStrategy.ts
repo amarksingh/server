@@ -11,7 +11,7 @@ class ProcessStrategy {
      * @param cwd - Working directory
      * @returns Promise resolving to parsed result
      */
-    async run(modulePath: string, handlerName: string, event: unknown, cwd?: string): Promise<unknown> {
+    public async run(modulePath: string, handlerName: string, event: unknown, cwd?: string): Promise<unknown> {
         return new Promise((resolve, reject) => {
             const wrapper: string = pathResolve(__dirname, '../wrappers/workerWrapper.js');
             const child: ChildProcessWithoutNullStreams = spawn(

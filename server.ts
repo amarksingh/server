@@ -97,7 +97,7 @@ class Server extends ServerContract {
      * @param handle - Middleware handler or array of handlers
      * @returns Server instance
      */
-    register(path: string | any, handle?: any): this {
+    public register(path: string | any, handle?: any): this {
         if (typeof path !== 'string') {
             handle = path;
             path = '/';
@@ -133,7 +133,7 @@ class Server extends ServerContract {
      *
      * @returns Server SSL/TLS configuration object
      */
-    createServerConfig(): Record<string, any> {
+    public createServerConfig(): Record<string, any> {
         return Object.assign(creatSslConfig(this[kSsl], this[kHttpVersion]));
     }
 
@@ -143,7 +143,7 @@ class Server extends ServerContract {
      * @param options - Address options
      * @returns Resolved socket path or address object
      */
-    address(options: Record<string, any> = {}): any {
+    public address(options: Record<string, any> = {}): any {
         if (pathIsAbsolute(String(options.port || ' '))) {
             return options.port;
         } else {
@@ -162,7 +162,7 @@ class Server extends ServerContract {
      * @param HttpRequest - Request class/constructor
      * @returns Server instance
      */
-    request(HttpRequest: any): this {
+    public request(HttpRequest: any): this {
         if (typeof HttpRequest != 'function') {
             throw new Error('HttpRequest class must be function/class');
         }
@@ -176,7 +176,7 @@ class Server extends ServerContract {
      * @param HttpResponse - Response class/constructor
      * @returns Server instance
      */
-    response(HttpResponse: any): this {
+    public response(HttpResponse: any): this {
         if (typeof HttpResponse != 'function') {
             throw new Error('HttpResponse class must function/class');
         }
@@ -189,7 +189,7 @@ class Server extends ServerContract {
      *
      * @returns Request dispatcher function
      */
-    handle(): (...args: any[]) => any {
+    public handle(): (...args: any[]) => any {
         if (this[kServerType] == 'serverless') {
             return (new Serverless(this.$serverlessConfig)).handle(this.$request, this.$response);
         } else if (this[kServerType] == 'server') {
@@ -204,7 +204,7 @@ class Server extends ServerContract {
      * @param type - Server type ('server' or 'serverless')
      * @returns Server instance
      */
-    type(type: string): this {
+    public type(type: string): this {
         this[kServerType] = type;
         return this;
     }

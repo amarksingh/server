@@ -13,7 +13,7 @@ class VmStrategy {
      * @param cwd - Working directory (optional)
      * @returns Promise resolving to handler result
      */
-    async run(modulePath: string, handlerName: string, event: unknown, cwd?: string): Promise<unknown> {
+    public async run(modulePath: string, handlerName: string, event: unknown, cwd?: string): Promise<unknown> {
         const resolvedModulePath: string = require.resolve(modulePath);
         const code: string = readFileSync(resolvedModulePath, 'utf8');
         const moduleDir: string = pathDirname(resolvedModulePath);

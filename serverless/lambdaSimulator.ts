@@ -54,7 +54,7 @@ class LambdaSimulator {
      * @param req - HTTP request object
      * @param res - HTTP response object
      */
-    async handleHttpRequest(req: any, res: any): Promise<void> {
+    public async handleHttpRequest(req: any, res: any): Promise<void> {
         const event: unknown = await EventBuilder.fromHttpRequest(req);
         try {
             const worker = LambdaWorker.create(this.$serverless.strategy); // or 'vm', 'process', 'fork'
@@ -71,7 +71,7 @@ class LambdaSimulator {
      * @param event - Event data
      * @returns Handler execution result
      */
-    async handleEvent(event: unknown): Promise<unknown> {
+    public async handleEvent(event: unknown): Promise<unknown> {
         const worker = LambdaWorker.create(this.$serverless.strategy);
         return await worker.run(this.$modulePath, this.$handlerName, event);
     }

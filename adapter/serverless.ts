@@ -23,7 +23,7 @@ class ServerLess {
      * @param $response - Response constructor class
      * @returns Request handler function
      */
-    handle($request: any, $response: any): (req: any, res: any) => Promise<void> {
+    public handle($request: any, $response: any): (req: any, res: any) => Promise<void> {
         return (req: any, res: any): Promise<void> => {
             req = new $request(req);
             res = new $response(res);

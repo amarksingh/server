@@ -34,7 +34,7 @@ class LambdaWorker {
      * @param options - Execution options
      * @returns Result of strategy run
      */
-    run(modulePath: string, handlerName: string, event: unknown, options: WorkerRunOptions = {}): Promise<unknown> {
+    public run(modulePath: string, handlerName: string, event: unknown, options: WorkerRunOptions = {}): Promise<unknown> {
         const cwd: string = options.cwd || pathDirname(modulePath);
         return this.strategy.run(modulePath, handlerName, event, cwd);
     }

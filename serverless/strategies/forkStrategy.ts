@@ -11,7 +11,7 @@ class ForkStrategy {
      * @param cwd - Working directory
      * @returns Promise resolving to result
      */
-    async run(modulePath: string, handlerName: string, event: unknown, cwd?: string): Promise<unknown> {
+    public async run(modulePath: string, handlerName: string, event: unknown, cwd?: string): Promise<unknown> {
         return new Promise((resolve, reject) => {
             const forkWrapper: string = pathResolve(__dirname, '../wrappers/frokWrapper.js');
             const child: ChildProcess = fork(forkWrapper, [modulePath, handlerName], { cwd, stdio: ['pipe', 'pipe', 'pipe', 'ipc'] });

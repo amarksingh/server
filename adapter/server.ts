@@ -27,7 +27,7 @@ class Server {
      * @param Response - Response constructor
      * @returns HTTP request handler function
      */
-    handle(Request: any, Response: any): (rawReq: any, rawRes: any, out?: (err?: unknown) => void) => void {
+    public handle(Request: any, Response: any): (rawReq: any, rawRes: any, out?: (err?: unknown) => void) => void {
         const errServer: StackLayer = {
             handle: (error: any, req: any, res: any, next: (err?: unknown) => void): void => {
                 let status: number = 500;

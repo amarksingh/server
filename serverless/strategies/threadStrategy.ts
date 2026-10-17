@@ -11,7 +11,7 @@ class ThreadStrategy {
      * @param cwd - Working directory (optional)
      * @returns Promise resolving to worker message
      */
-    async run(modulePath: string, handlerName: string, event: unknown, cwd?: string): Promise<unknown> {
+    public async run(modulePath: string, handlerName: string, event: unknown, cwd?: string): Promise<unknown> {
         return new Promise((resolve, reject) => {
             const workerPath: string = pathResolve(__dirname, '../wrappers/threadWrapper.js');
             const worker: Worker = new Worker(workerPath, {
